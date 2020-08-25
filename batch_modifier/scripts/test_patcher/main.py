@@ -5,11 +5,9 @@
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
-
-from ..config import *
-import config as script_config
-from utils import file_path, read_content, get_lines, index_of, list_local_repository_names
-from github import github_process
+from batch_modifier.github import github_process
+from batch_modifier.scripts.test_patcher import config as script_config
+from batch_modifier.utils import file_path, read_content, split_lines, list_local_repository_names, index_of
 
 
 def apply_changes(repository):
@@ -17,7 +15,7 @@ def apply_changes(repository):
     filepath = file_path(repository, script_config.run_tests_sh)
     content = read_content(filepath)
     file = open(filepath, 'w')
-    content_lines = get_lines(content)
+    content_lines = split_lines(content)
     content_lines = list(map(lambda l: script_config.replacements[l] if l in script_config.replacements else l, content_lines))
     file.write('\n'.join(content_lines))
     file.close()
@@ -25,7 +23,7 @@ def apply_changes(repository):
     filepath = file_path(repository, script_config.setup_cfg)
     content = read_content(filepath)
     file = open(filepath, 'w')
-    content_lines = get_lines(content)
+    content_lines = split_lines(content)
 
     i = 0
     while i < len(content_lines):
@@ -64,7 +62,7 @@ def main():
     for repository in list_local_repository_names():  # List all cloned repositories
         content = read_content(file_path(repository, script_config.run_tests_sh))
         if content:
-            split = get_lines(content)
+            split = split_lines(content)
 
             test_substitutable = False
             for line in split:
@@ -90,7 +88,7 @@ def main():
 
             content = read_content(file_path(repository, script_config.setup_cfg))
             if test_substitutable and content:
-                split = get_lines(content)
+                split = split_lines(content)
                 cmdidx = index_of('test = pytest', split)
                 if not cmdidx:
                     cmdidx = index_of('test=pytest', split)

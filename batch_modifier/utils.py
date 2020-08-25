@@ -6,10 +6,11 @@
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-from config import local_repositories_path
 import os
 import subprocess
 from os import path
+
+from batch_modifier.config import local_repositories_path
 
 
 def file_path(repository, filename):
@@ -53,9 +54,9 @@ def execute(cmd):
 
 def list_directory_names(parent_directory):
     """List directory names inside the parent directory."""
-    next(os.walk(parent_directory))[1]
+    return next(os.walk(parent_directory))[1]
 
 
 def list_local_repository_names():
     """List locally cloned repositories."""
-    list_directory_names(local_repositories_path)
+    return list_directory_names(local_repositories_path)

@@ -14,8 +14,10 @@ import subprocess
 import sys
 
 import pygit2
-from config import local_repositories_path, organization, github
 from os import path
+
+from batch_modifier import config
+from batch_modifier.utils import execute
 
 
 def list_invenio_modules(github):
@@ -26,7 +28,7 @@ def list_invenio_modules(github):
     try:
         user = github.get_user(username)
         # invenio_repositories = [repository.name for repository in user.get_repos() \
-                        # if repo.name.startswith('invenio-')]
+        # if repo.name.startswith('invenio-')]
         # invenio_repositories = [repository.name for repository in g.search_repositories(query='language:python')]
         invenio_repositories = github.search_repositories(query='language:python')
         return invenio_repositories
@@ -42,8 +44,7 @@ def download_invenio_modules(repositories, local_repositories_path):
     os.mkdir(local_repositories_path)
     url_github = "https://github.com/inveniosoftware"
     for repository_name in repositories:
-        pygit2.clone_repository(f"{url_github}/{repository_name}", \
-            f"{local_repositories_path}/{repository_name}")
+        pygit2.clone_repository(f"{url_github}/{repository_name}", f"{local_repositories_path}/{repository_name}")
 
 
 def check_status(repository, expected):
@@ -59,7 +60,7 @@ def check_status(repository, expected):
     else:
         modifs_ok = False
 
-    return modifs_ok 
+    return modifs_ok
 
 
 def commit(repo, message):
@@ -70,7 +71,7 @@ def commit(repo, message):
         commited = True
     except:
         commited = False
-    
+
     return commited
 
 
@@ -93,7 +94,7 @@ def open_pr(gh_repository, title, body, branch, base):
             body=body,
             head=branch,
             base=base
-            )
+        )
         pr_opened = True
     except:
         pr_opened = False
@@ -110,10 +111,10 @@ def github_process(open_pr, expected, repository, branch, message, title, body, 
         committed = commit(repository, message)
         if committed:
             print("Has been committed")
-            pushed = push(destination, branch)
+            pushed = push(destination, branch) # TODO: destination
             if pushed and open_pr:
                 print("Has been pushed")
-                gh_repository = f"{organization}/{repository}"
+                gh_repository = f"{config.organization}/{repository}"
                 pr_opened = open_pr(gh_repository, title, body, branch, base)
                 if pr_opened:
                     print("PR has been opened")

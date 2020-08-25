@@ -5,7 +5,7 @@
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
-from batch_modifier.github import github_process
+from batch_modifier.github_utils import github_process
 from batch_modifier.scripts.test_patcher import config as script_config
 from batch_modifier.utils import file_path, read_content, split_lines, list_local_repository_names, index_of
 
@@ -125,3 +125,7 @@ def main():
             print('Aborting.')
     else:
         print('No modification was made.')
+
+
+if __name__ == "__main__":
+    main()

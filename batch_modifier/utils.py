@@ -10,12 +10,12 @@ import os
 import subprocess
 from os import path
 
-from batch_modifier.config import local_repositories_path
+from batch_modifier import config
 
 
 def file_path(repository, filename):
     """Absolute file path inside a repository."""
-    return local_repositories_path + os.path.sep + repository + os.path.sep + filename
+    return config.local_repositories_path + os.path.sep + repository + os.path.sep + filename
 
 
 def read_content(filepath):
@@ -54,9 +54,12 @@ def execute(cmd):
 
 def list_directory_names(parent_directory):
     """List directory names inside the parent directory."""
-    return next(os.walk(parent_directory))[1]
+    if path.exists(parent_directory) and os.path.isdir(parent_directory):
+        return next(os.walk(parent_directory))[1]
+    else:
+        raise Exception()
 
 
 def list_local_repository_names():
     """List locally cloned repositories."""
-    return list_directory_names(local_repositories_path)
+    return list_directory_names(config.local_repositories_path)

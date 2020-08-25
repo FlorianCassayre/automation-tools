@@ -11,6 +11,7 @@
 from github import Github
 
 organization = "invenio-toaster"
+
 destination = "origin"
 
 # Directory path to hold a copy of the repositories

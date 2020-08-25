@@ -49,7 +49,7 @@ def download_invenio_modules(repositories, local_repositories_path):
 
 def check_status(repository, expected):
     """Check if modifications are the ones expected."""
-    os.chdir(repository)
+    os.chdir(config.local_repositories_path + os.path.sep + repository)
     outputs = []
     for out in execute(["git", "status", "-s"]):
         outputs.append(out.strip())
@@ -111,7 +111,10 @@ def github_process(open_pr, expected, repository, branch, message, title, body, 
         committed = commit(repository, message)
         if committed:
             print("Has been committed")
-            pushed = push(destination, branch) # TODO: destination
+            pushed = push(config.destination, branch)
+            if not pushed:
+                raise Exception("Failed to push")
+
             if pushed and open_pr:
                 print("Has been pushed")
                 gh_repository = f"{config.organization}/{repository}"
@@ -120,11 +123,18 @@ def github_process(open_pr, expected, repository, branch, message, title, body, 
                     print("PR has been opened")
                 else:
                     raise Exception("PR has not been opened")
-
-            else:
-                raise Exception("Failed to push")
         else:
             raise Exception("Failed to commit")
 
     else:
         raise Exception("Please review modifications")
+
+
+def create_organization_repository(repository):
+    org = config.github.get_organization(config.organization)
+    org.create_repo(repository)
+
+
+def set_origin(repository, new_origin_url):
+    os.chdir(config.local_repositories_path + os.path.sep + repository)
+    execute(["git", "remote", "set-url", config.destination, new_origin_url])

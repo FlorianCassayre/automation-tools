@@ -1,4 +1,4 @@
-## Batch patcher
+## Automation tools
 
 Management tools to perform modifications accross Invenio repositories.
 
@@ -10,7 +10,7 @@ The following Python scripts are fairly simple in terms of code. Some of the fun
 
 ```
 .
-└── batch_modifier
+└── automation_tools
     ├── __init__.py
     ├── config.py
     ├── github_utils.py
@@ -24,9 +24,7 @@ The following Python scripts are fairly simple in terms of code. Some of the fun
     └── utils.py
 ```
 
-### Batch modifier
-
-#### How to configure it
+### Global configuration
 
 Below you can find an example of a working `config.py`.
 You have to modify any of the parameters to fit your current settings

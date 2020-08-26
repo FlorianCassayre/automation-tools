@@ -16,9 +16,9 @@ import sys
 import pygit2
 from os import path
 
-from batch_modifier import config
-from batch_modifier.config import github
-from batch_modifier.utils import execute
+from automation_tools import config
+from automation_tools.config import github
+from automation_tools.utils import execute
 
 
 def list_invenio_modules():

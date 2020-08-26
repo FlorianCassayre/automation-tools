@@ -5,9 +5,9 @@
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
-from batch_modifier.github_utils import github_process
-from batch_modifier.scripts.test_patcher import config as script_config
-from batch_modifier.utils import file_path, read_content, split_lines, list_local_repository_names, index_of
+from automation_tools.github_utils import github_process
+from automation_tools.scripts.test_patcher import config as script_config
+from automation_tools.utils import file_path, read_content, split_lines, list_local_repository_names, index_of
 
 
 def apply_changes(repository):

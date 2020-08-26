@@ -10,7 +10,7 @@ import os
 import subprocess
 from os import path
 
-from batch_modifier import config
+from automation-tools import config
 
 
 def file_path(repository, filename):

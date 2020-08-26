@@ -10,13 +10,14 @@
 
 from github import Github
 
-organization = "invenio-toaster"
+# The organization name
+organization = "inveniosoftware"
 
+# Remote name
 destination = "origin"
 
 # Directory path to hold a copy of the repositories
-local_repositories_path = 'Invenio clones'
+local_repositories_path = '/path/to/inveniosoftware_cache'
 
 # Github credentials / token
-github_token = 'c5bd60144cc355327fd519bdb21124341a6abc5a'
-github = Github(github_token)
+github = Github('YOUR_GITHUB_TOKEN')

@@ -42,11 +42,14 @@ def apply_changes(repository):
         script_config.open_pr,
         script_config.expected,
         repository,
-        script_config.branch,
+        'master',  # Always work on local master
+        script_config.remote_branch,
         script_config.message,
         script_config.title,
         script_config.body,
-        script_config.base
+        script_config.base,
+        script_config.commit_extra_before,
+        script_config.commit_extra_after
     )
 
 

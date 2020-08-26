@@ -39,10 +39,7 @@ def index_of(string, values):
         return None
 
 def execute(cmd):
-    """
-    Snippet from 
-    https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running.
-    """
+    """Snippet from https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running."""
     popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
     for stdout_line in iter(popen.stdout.readline, ""):
         yield stdout_line 

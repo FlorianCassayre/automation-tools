@@ -22,16 +22,23 @@ from automation_tools.utils import execute
 
 
 def list_invenio_modules():
-    """List invenio modules by parsing inveniosoftware organization
-     - https://github.com/inveniosoftware.
-    """
+    """List invenio modules by parsing inveniosoftware organization."""
     username = 'inveniosoftware'
     try:
         user = github.get_user(username)
-        # invenio_repositories = [repository.name for repository in user.get_repos() \
-        # if repo.name.startswith('invenio-')]
-        # invenio_repositories = [repository.name for repository in g.search_repositories(query='language:python')]
-        invenio_repositories = github.search_repositories(query='language:python')
+        invenio_repositories = [repository.name for repository in user.get_repos() \
+                                if repo.name.startswith('invenio-')]
+        return invenio_repositories
+
+    except:
+        print('Failed to process the request')
+
+
+def list_organization_repositories(organization):
+    """List repositories by parsing configured organization."""
+    try:
+        user = github.get_user(organization)
+        invenio_repositories = [repository.name for repository in user.get_repos()]
         return invenio_repositories
 
     except:
@@ -41,7 +48,8 @@ def list_invenio_modules():
 def download_invenio_modules(repositories, local_repositories_path):
     """Download all the invenio modules in a newly created subfolder."""
     if path.exists(local_repositories_path):
-        shutil.rmtree(local_repositories_path)
+        raise Exception("Folder already exists")
+
     os.mkdir(local_repositories_path)
     url_github = "https://github.com/inveniosoftware"
     for repository_name in repositories:
@@ -121,7 +129,6 @@ def open_pr(gh_repository, title, body, branch, base):
 def github_process(is_mode_pr, expected, repository, local_branch, remote_branch, message, title, body, base,
                    commit_extra_before, commit_extra_after):
     """."""
-    # TODO: raise Exception
     modifs_ok = check_status(repository, expected)
     if modifs_ok:
         print("Has to be committed")

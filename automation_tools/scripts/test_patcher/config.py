@@ -49,6 +49,6 @@ commit_extra_after = []  # eg. ['--no-gpg-sign']
 
 # Expected file modifications (safety check)
 expected = [
-        'M run-tests.sh',
-        'M setup.cfg'
-        ]
+    'M run-tests.sh',
+    'M setup.cfg'
+]

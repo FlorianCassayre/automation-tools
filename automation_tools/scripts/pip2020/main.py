@@ -7,12 +7,14 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 import os
-import subprocess
 import shutil
+import subprocess
+from os import path
+
+from automation_tools import config
+from automation_tools.repositories import GithubUtils
 from automation_tools.scripts.pip2020 import config as script_config
 from automation_tools.utils import execute
-from automation_tools.repositories import GithubUtils
-from os import path
 
 
 def error_detector(repositories):
@@ -31,21 +33,21 @@ def error_detector(repositories):
         folder_repository = f'{script_config.local_virtualenvs_path}/{repository}'
         os.mkdir(folder_repository)
 
-        subprocess.check_output(['virtualenv', '-p', \
-            script_config.python_version, folder_repository])
+        subprocess.check_output(['virtualenv', '-p',
+                                 script_config.python_version, folder_repository])
         try:
             outputs = []
             if script_config.flag_2020:
-                command = [f'{folder_repository}/bin/pip', \
-                    'install', f'Invenio clones/{repository}', \
-                    '--use-feature=2020-resolver']
+                command = [f'{folder_repository}/bin/pip',
+                           'install', f'Invenio clones/{repository}',
+                           '--use-feature=2020-resolver']
 
             else:
-                command = [f'{folder_repository}/bin/pip', \
-                    'install', f'Invenio clones/{repository}']
+                command = [f'{folder_repository}/bin/pip',
+                           'install', f'Invenio clones/{repository}']
 
             for out in execute(command):
-                    outputs.append(out.strip())
+                outputs.append(out.strip())
 
             if 'ERROR' in outputs:
                 need_fix.append(repository)
@@ -65,11 +67,11 @@ def main():
     """."""
     invenio_repositories = GithubUtils.list_invenio_modules()
     if script_config.download_locally:
-        GithubUtils.download_invenio_modules(invenio_repositories, \
-            script_config.local_repositories_path)
+        GithubUtils.download_invenio_modules(invenio_repositories,
+                                             config.local_repositories_path)
 
     need_fix, clean, command_fails = error_detector(invenio_repositories)
-    
+
     print("Following repositories have to be fixed")
     for repositories in need_fix:
         print(repositories)

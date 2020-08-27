@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 import os
 
-from automation_tools.github_utils import github_process
+from automation_tools.repositories import LocalRepository
 from automation_tools.scripts.test_patcher import config as script_config
 from automation_tools.utils import (file_path, index_of,
                                     list_local_repository_names, read_content,
@@ -32,8 +32,8 @@ def apply_changes(repository):
     i = 0
     while i < len(content_lines):
         if content_lines[i] == '[aliases]':
-            assert (content_lines[i] == 'test = pytest' or content_lines[i] == 'test=pytest') \
-                   and content_lines[i + 1] == ''
+            assert (content_lines[i + 1] == 'test = pytest' or content_lines[i + 1] == 'test=pytest') \
+                   and content_lines[i + 2] == ''
             del content_lines[i]
             del content_lines[i]
             del content_lines[i]
@@ -42,19 +42,20 @@ def apply_changes(repository):
     file.write(os.linesep.join(content_lines))
     file.close()
 
-    github_process(
-        script_config.open_pr,
-        script_config.expected,
-        repository,
-        'master',  # Always work on local master
-        script_config.remote_branch,
-        script_config.message,
-        script_config.title,
-        script_config.body,
-        script_config.base,
-        script_config.commit_extra_before,
-        script_config.commit_extra_after
-    )
+    with LocalRepository(repository) as repo:
+        repo.github_process(
+            script_config.open_pr,
+            script_config.expected,
+            repository,
+            'master',  # Always work on local master
+            script_config.remote_branch,
+            script_config.message,
+            script_config.title,
+            script_config.body,
+            script_config.base,
+            script_config.commit_extra_before,
+            script_config.commit_extra_after
+        )
 
 
 def main():

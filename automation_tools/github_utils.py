@@ -12,9 +12,9 @@ import os
 import shutil
 import subprocess
 import sys
+from os import path
 
 import pygit2
-from os import path
 
 from automation_tools import config
 from automation_tools.config import github
@@ -23,11 +23,11 @@ from automation_tools.utils import execute
 
 def list_invenio_modules():
     """List invenio modules by parsing inveniosoftware organization."""
-    username = 'inveniosoftware'
+    organization = 'inveniosoftware'
     try:
-        user = github.get_user(username)
+        user = github.get_organization(organization)
         invenio_repositories = [repository.name for repository in user.get_repos() \
-                                if repo.name.startswith('invenio-')]
+                                if repository.name.startswith('invenio-')]
         return invenio_repositories
 
     except:
@@ -37,7 +37,7 @@ def list_invenio_modules():
 def list_organization_repositories(organization):
     """List repositories by parsing configured organization."""
     try:
-        user = github.get_user(organization)
+        user = github.get_organization(organization)
         invenio_repositories = [repository.name for repository in user.get_repos()]
         return invenio_repositories
 
@@ -57,7 +57,7 @@ def download_invenio_modules(repositories, local_repositories_path):
 
 
 def cd_repository(repository):
-    os.chdir(config.local_repositories_path + os.path.sep + repository)
+    os.chdir(path.join(config.local_repositories_path, repository))
 
 
 def check_status(repository, expected):
@@ -155,10 +155,12 @@ def github_process(is_mode_pr, expected, repository, local_branch, remote_branch
 
 
 def create_organization_repository(repository):
+    """Creates a repository under the organization name."""
     org = config.github.get_organization(config.organization)
     org.create_repo(repository)
 
 
 def set_origin(repository, new_origin_url):
-    os.chdir(config.local_repositories_path + os.path.sep + repository)
+    """Set a repository's origin."""
+    cd_repository(repository)
     execute(["git", "remote", "set-url", config.destination, new_origin_url])

@@ -10,12 +10,12 @@ import os
 import subprocess
 from os import path
 
-from automation-tools import config
+from automation_tools import config
 
 
 def file_path(repository, filename):
     """Absolute file path inside a repository."""
-    return config.local_repositories_path + os.path.sep + repository + os.path.sep + filename
+    return path.join(config.local_repositories_path, repository, filename)
 
 
 def read_content(filepath):
@@ -28,7 +28,7 @@ def read_content(filepath):
 
 def split_lines(content):
     """Returns a list of strings corresponding to the lines of this string."""
-    return content.split('\n')
+    return content.split(os.linesep)
 
 
 def index_of(string, values):

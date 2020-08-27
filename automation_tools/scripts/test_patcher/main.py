@@ -5,9 +5,13 @@
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+import os
+
 from automation_tools.github_utils import github_process
 from automation_tools.scripts.test_patcher import config as script_config
-from automation_tools.utils import file_path, read_content, split_lines, list_local_repository_names, index_of
+from automation_tools.utils import (file_path, index_of,
+                                    list_local_repository_names, read_content,
+                                    split_lines)
 
 
 def apply_changes(repository):
@@ -17,7 +21,7 @@ def apply_changes(repository):
     file = open(filepath, 'w')
     content_lines = split_lines(content)
     content_lines = list(map(lambda l: script_config.replacements[l] if l in script_config.replacements else l, content_lines))
-    file.write('\n'.join(content_lines))
+    file.write(os.linesep.join(content_lines))
     file.close()
 
     filepath = file_path(repository, script_config.setup_cfg)
@@ -28,14 +32,14 @@ def apply_changes(repository):
     i = 0
     while i < len(content_lines):
         if content_lines[i] == '[aliases]':
+            assert (content_lines[i] == 'test = pytest' or content_lines[i] == 'test=pytest') \
+                   and content_lines[i + 1] == ''
             del content_lines[i]
-            if (content_lines[i] == 'test = pytest' or content_lines[i] == 'test=pytest') and content_lines[i + 1] == '':
-                del content_lines[i]
-                del content_lines[i]
-            else:
-                raise Exception  # Illegal state
+            del content_lines[i]
+            del content_lines[i]
+            break
         i += 1
-    file.write('\n'.join(content_lines))
+    file.write(os.linesep.join(content_lines))
     file.close()
 
     github_process(
@@ -63,31 +67,24 @@ def main():
     to_patch = []
 
     for repository in list_local_repository_names():  # List all cloned repositories
+        # Analyze `run-tests.sh`
         content = read_content(file_path(repository, script_config.run_tests_sh))
         if content:
             split = split_lines(content)
 
-            test_substitutable = False
-            for line in split:
-                if line in script_config.replacements:
-                    test_substitutable = True
-                    break
+            test_substitutable = any(line in script_config.replacements for line in split)
+
             if test_substitutable:
                 count_test_substitutable += 1
 
-
-            has_pytest = False
-            for s in split:
-                if s == 'pytest' or s.startswith('pytest ') or s.startswith('py.test '):
-                    has_pytest = True
-                    break
+            has_pytest = any(s == 'pytest' or s.startswith('pytest ') or s.startswith('py.test ') for s in split)
 
             if test_substitutable or not has_pytest:
                 count_with_test_command += 1
 
             count_with_runtests += 1
 
-            # ---
+            # Analyze `setup.cfg`
 
             content = read_content(file_path(repository, script_config.setup_cfg))
             if test_substitutable and content:
@@ -103,7 +100,6 @@ def main():
                             if script_config.should_apply_changes(repository):
                                 to_patch.append(repository)
                             count_with_single_test_alias += 1
-
 
         count_total += 1
 

@@ -20,4 +20,4 @@ destination = "origin"
 local_repositories_path = '/path/to/inveniosoftware_cache'
 
 # Github credentials / token
-github = Github('YOUR_GITHUB_TOKEN')
+github = Github()

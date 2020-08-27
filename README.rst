@@ -130,4 +130,35 @@ other modifications.
 PIP2020
 ~~~~~~~
 
-TO BE DONE AFTER REFACTORING
+The goal of this script is to try out the new flag for PIP2020 ``'--use-feature=2020-resolver``
+and identify the packages that will fail once it is released. This is configurable to use it as
+well with the current installer if needed.
+
+How it works
+^^^^^^^^^^^^
+
+It is performing the following actions:
+
+1. Listing the invenio repositories
+2. Downloarding them if required
+3. Installing them and sorting them according to their status
+
+How to configure it
+^^^^^^^^^^^^^^^^^^^
+
+Below you can find an example of a working ``config.py``. You have to
+modify any of the parameters to fit your current settings
+
+.. code:: python
+
+    # Set the local path to install virtual environments
+    local_virtualenvs_path = 'Virtualenvs'
+
+    # Set python version to create virtualenv
+    python_version = 'python3.6'
+
+    # Download locally the packages you want to test
+    download_locally = False
+
+    # Use the new pip2020 resolver
+    flag_2020 = True

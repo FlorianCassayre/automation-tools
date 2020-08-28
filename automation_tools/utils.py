@@ -31,12 +31,13 @@ def split_lines(content):
     return content.split(os.linesep)
 
 
-def index_of(string, values):
+def index_of(needle, values):
     """Returns the array index of a given value if it exists or None."""
     try:
-        return values.index(string)
+        return values.index(needle)
     except ValueError:
         return None
+
 
 def execute(cmd):
     """Snippet from https://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running."""
